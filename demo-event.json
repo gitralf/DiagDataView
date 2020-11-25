@@ -1,0 +1,103 @@
+{
+    "ver": "4.0",
+    "name": "Microsoft.Windows.Audio.EndpointBuilder.DeviceInfo",
+    "time": "2020-11-25T12:53:06.9119803Z",
+    "iKey": "o:0a89d516ae714e01ae89c96d185e9ae3",
+    "ext": {
+        "utc": {
+            "eventFlags": 258,
+            "pgName": "WINCORE",
+            "flags": 905970180,
+            "epoch": "1002668",
+            "seq": 13
+        },
+        "metadata": {
+            "f": {
+                "ContainerId": 8,
+                "streamEffectClsid": 8,
+                "modeEffectClsid": 8,
+                "endpointEffectClsid": 8,
+                "localEffectClsid": 8,
+                "globalEffectClsid": 8,
+                "MicArrayGeometry": {
+                    "f": {
+                        "usFrequencyBandHi": 2,
+                        "usFrequencyBandLo": 2,
+                        "usMicArrayType": 2,
+                        "usNumberOfMicrophones": 2,
+                        "usVersion": 2,
+                        "wHorizontalAngleBegin": 2,
+                        "wHorizontalAngleEnd": 2,
+                        "wVerticalAngleBegin": 2,
+                        "wVerticalAngleEnd": 2
+                    }
+                }
+            },
+            "privTags": 16779264
+        },
+        "os": {
+            "bootId": 7,
+            "name": "Windows",
+            "ver": "10.0.19042.630.amd64fre.vb_release.191206-1406"
+        },
+        "app": {
+            "id": "W:0000f519feec486de87ed73cb92d3cac802400000000!0000010db07461e45b41c886192df6fd425ba8d42d82!svchost.exe",
+            "ver": "1972/12/14:16:22:50!1C364!svchost.exe",
+            "asId": 21
+        },
+        "device": {
+            "localId": "s:1053C73A-C58D-4EE7-9847-BB9D610F4F9B",
+            "deviceClass": "Windows.Desktop"
+        },
+        "protocol": {
+            "devMake": "Microsoft Corporation",
+            "devModel": "Virtual Machine"
+        },
+        "user": {
+            "localId": "w:2A3B4819-AF32-9C6C-48A2-678662E8B2A4"
+        },
+        "loc": {
+            "tz": "+01:00"
+        }
+    },
+    "data": {
+        "endpointInstanceId": "SWD\\MMDEVAPI\\{3.0.0.00000002}.{6C26BA7D-F0B2-4225-B422-8168C5261E45}",
+        "HWID": "",
+        "DeviceInstanceId": "",
+        "BusEnumeratorName": "",
+        "EndpointDevnodeId": "",
+        "EndpointFormFactor": 0,
+        "JackSubType": "",
+        "endpointID": "{6C26BA7D-F0B2-4225-B422-8168C5261E45}",
+        "IsBluetooth": 0,
+        "IsUSB": 0,
+        "IsSideband": 0,
+        "ContainerId": "00000000-0000-0000-0000-000000000000",
+        "Flow": 0,
+        "streamEffectClsid": "00000000-0000-0000-0000-000000000000",
+        "streamEffectModule": "",
+        "modeEffectClsid": "00000000-0000-0000-0000-000000000000",
+        "modeEffectModule": "",
+        "endpointEffectClsid": "00000000-0000-0000-0000-000000000000",
+        "endpointEffectModule": "",
+        "localEffectClsid": "00000000-0000-0000-0000-000000000000",
+        "localEffectModule": "",
+        "globalEffectClsid": "00000000-0000-0000-0000-000000000000",
+        "globalEffectModule": "",
+        "MicArrayGeometry": {
+            "usFrequencyBandHi": 0,
+            "usFrequencyBandLo": 0,
+            "usMicArrayType": 0,
+            "usNumberOfMicrophones": 0,
+            "usVersion": 0,
+            "wHorizontalAngleBegin": 0,
+            "wHorizontalAngleEnd": 0,
+            "wVerticalAngleBegin": 0,
+            "wVerticalAngleEnd": 0,
+            "MicCoords": []
+        },
+        "persistentId": "",
+        "isFarField": 0,
+        "AudioPosture - Supported": 0
+    }
+}
