@@ -1,0 +1,30 @@
+<diagdataevents>
+    <areas>
+        <area name="Appraiser">
+            <events>
+                <event name="Microsoft.Windows.Appraiser.General.ChecksumTotalPictureCount">
+                    <description>
+                        This event lists the types of objects and how many of each exist on the client device. This allows for a quick way to ensure that the records present on the server match what is present on the client. The data collected with this event is used to help keep Windows up to date.
+                    </description>
+                    <fields>
+                        <field name="DatasourceApplicationFile_19H1">
+                            <description>
+                                The count of the number of this particular object type present on this device.
+                            </description>
+                        </field>
+                        <field name="DatasourceApplicationFile_19H1Setup">
+                            <description>
+                                The count of the number of this particular object type present on this device.
+                            </description> 
+                        </field>
+                        <field name="DatasourceApplicationFile_20H1">
+                            <description>
+                                The count of the number of this particular object type present on this device.
+                            </description>
+                        </field>
+                    </fields>
+                </event>
+            </events>
+        </area>
+    </areas>
+</diagdataevents>
