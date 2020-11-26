@@ -16,7 +16,7 @@ Get-DiagnosticData -starttime (get-date).AddDays(-1) -RequiredTelemetryOnly |out
     "Eventname: {0}" -f $payload.Name
     "Beschreibung des Events: {0}" -f $events.($payload.Name).description
 
-    foreach ($field in ($payload.data | get-member -MemberType NoteProperty | select -ExpandProperty Name)){
+    foreach ($field in ($payload.data | get-member -MemberType NoteProperty | select-object -ExpandProperty Name)){
         "  {0} hat den Wert {1} und beschreibt {2}" -f $field,$payload.data.$field,$events.($payload.Name).$field
 
     }
