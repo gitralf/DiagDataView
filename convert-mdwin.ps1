@@ -25,15 +25,18 @@ do {
         $json+="`n    },`n    `""+$Matches[1]+"`": {`n"
         $lineNr++
         $lineNr++
-        $json+="        `"description`": `""+$mdfile[$lineNr]+"`""
+        $desctopic=$mdfile[$lineNr].replace('"',"'")
+        $desctopic=$desctopic.replace("\","/")
+        $json+="        `"eventdescription`": `""+$desctopic+"`""
     } 
 
     if ($mdfile[$lineNr] -match "^\- \*\*([^\*]+)\*\*\s+(\S.*$)"){
 #   - **Beschreibung**  This is a demo line
         $desc=$Matches[2].replace('"',"'")
+        $desc=$desc.replace("\","/")
         $json+=",`n        `""+$Matches[1]+"`": `""+$desc+"`""
     }
 } while ($lineNr -lt $lineMax)
 
 $json+="`n    }`n}"
-$json | Out-File -filepath ".\events1.json"
+$json | Out-File -filepath ".\events.json"
