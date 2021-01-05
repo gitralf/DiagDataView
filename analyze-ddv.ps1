@@ -1,3 +1,7 @@
+Param(
+    [parameter(mandatory=$false)][string]$inputfile
+)
+
 #CSS
 $header=@"
 <html>
@@ -47,41 +51,48 @@ $header=@"
   <body>
 "@
 
-$starttime=(get-date -hour 0 -minute 0 -second 0).AddDays(-1)
-$endtime = (get-date -hour 0 -minute 0 -second 0)
-
-$intro="<h1>Events at $env:COMPUTERNAME from $starttime to $endtime</h1>"
 
 
-$categoryTable="<h1>Diagnostic Data Categories</h1>`n<table>`n<tr><th width=`"5%`">ID</th><th width=`"30%`">Name</th><th width=`"65%`">Description</th></tr>`n"
-Get-DiagnosticDataCategories |ForEach-Object {
-    $categoryTable+="<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>`n" -f $_.Id,$_.Name,$_.Description
-}
-$categoryTable+="</table>"
+$ddv=Import-Csv -Path $inputfile -UseCulture
+
+$endtime=$ddv[0].Timestamp
+$starttime=$ddv[$ddv.length-1].Timestamp
+
+"von {0} bis {1}" -f $starttime,$endtime
+
+$intro="<h1>DDV-Events at $env:COMPUTERNAME from $starttime to $endtime</h1>"
+
+
+# $categoryTable="<h1>Diagnostic Data Categories</h1>`n<table>`n<tr><th width=`"5%`">ID</th><th width=`"30%`">Name</th><th width=`"65%`">Description</th></tr>`n"
+# Get-DiagnosticDataCategories |ForEach-Object {
+#     $categoryTable+="<tr><td>{0}</td><td>{1}</td><td>{2}</td></tr>`n" -f $_.Id,$_.Name,$_.Description
+# }
+# $categoryTable+="</table>"
 
 
 $eventAppearance=@{}
-$categoryAppearance=@{}
+# $categoryAppearance=@{}
 
 $events = get-content -Path "./events.json" |convertfrom-json 
 $details="<h1>Event-Details</h1>`n"
 
 $counter=0
-Get-DiagnosticData -starttime $starttime -endtime $endtime -RequiredTelemetryOnly | foreach-object {
-# Get-DiagnosticData -starttime (get-date -hour 0 -minute 0 -second 0).AddDays(-1) -endtime (get-date -hour 0 -minute 0 -second 0) -RequiredTelemetryOnly | foreach-object {
-# Get-DiagnosticData -starttime (get-date -hour 0 -minute 0 -second 0).AddDays(-1) -endtime (get-date -hour 0 -minute 0 -second 0) -RequiredTelemetryOnly |out-gridview  -Title "Events (required)" -PassThru |foreach-object {
-            
+
+
+$ddv | foreach-object {
+
     $counter++
-    $eventName=$_.Name
+    $eventName=$_.FullName
     $eventTime=$_.Timestamp
 
-    foreach ($temp in $_.DiagnosticDataCategories){
-        $categoryAppearance[$temp]+="/"+$counter
-    }
+    # This does not show up in DDV, but DDV knows about the category. Why?
+    # foreach ($temp in $_.DiagnosticDataCategories){
+    #     $categoryAppearance[$temp]+="/"+$counter
+    # }
     
     $eventAppearance[$eventName]+="/"+$counter
 
-    $payload=$_.payload | ConvertFrom-Json
+    $payload=$_.json | ConvertFrom-Json
       
     # $details+="<tr style='background-color:#FF0000;color:#FFFFFF'><td><strong>Event {0}</strong></td><td><strong>{1}</strong></td><td colspan=2><strong>created: {2}</strong></td></tr>`n" -f $counter,$eventName,$eventTime
     $details+="<h2>Event {0}: {1} ({2})</h2>`n" -f $counter,$eventName,$eventTime
@@ -108,6 +119,6 @@ $eventAppearance.keys | sort-object | foreach-object{
 
 $summaryTable+="</table>"
 
-$out="$header $intro $categoryTable $summaryTable $details"
+$out="$header $intro $summaryTable $details"
 
-$out | Out-File -FilePath "c:\temp\report.html"
+$out | Out-File -FilePath "c:\temp\report-ddv.html"
