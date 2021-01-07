@@ -56,9 +56,10 @@ $header=@"
 $ddv=Import-Csv -Path $inputfile -UseCulture
 
 $endtime=$ddv[0].Timestamp
-$starttime=$ddv[$ddv.length-1].Timestamp
+$totalevents=$ddv.length-1
+$starttime=$ddv[$totalevents].Timestamp
 
-"von {0} bis {1}" -f $starttime,$endtime
+# "von {0} bis {1}" -f $starttime,$endtime
 
 $intro="<h1>DDV-Events at $env:COMPUTERNAME from $starttime to $endtime</h1>"
 
@@ -81,10 +82,12 @@ $counter=0
 
 $ddv | foreach-object {
 
-    $counter++
     $eventName=$_.FullName
     $eventTime=$_.Timestamp
-
+    
+    Write-Progress -Activity "analyzing DDV file" -CurrentOperation "extracting event $eventtime" -Status "going back from $endtime to $starttime" -PercentComplete (100*$counter/$totalevents)
+    
+    $counter++
     # This does not show up in DDV, but DDV knows about the category. Why?
     # foreach ($temp in $_.DiagnosticDataCategories){
     #     $categoryAppearance[$temp]+="/"+$counter
