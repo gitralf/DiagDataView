@@ -52,11 +52,19 @@ $header=@"
 "@
 
 
-
+write-host "importing CSV file"
 $ddv=Import-Csv -Path $inputfile -UseCulture
+
+$outfile="c:\temp\report-ddv.html"
+
+$maxevents=1000
 
 $endtime=$ddv[0].Timestamp
 $totalevents=$ddv.length-1
+if ($totalevents -gt $maxevents){
+    write-host "too much events ($totalevents). Limiting to $maxevents..."
+    $totalevents=$maxevents
+}
 $starttime=$ddv[$totalevents].Timestamp
 
 # "von {0} bis {1}" -f $starttime,$endtime
@@ -70,6 +78,50 @@ $intro="<h1>DDV-Events at $env:COMPUTERNAME from $starttime to $endtime</h1>"
 # }
 # $categoryTable+="</table>"
 
+# PDT_BrowsingHistory                                 0x0000000000000002u
+# PDT_DeviceConnectivityAndConfiguration              0x0000000000000800u
+# PDT_InkingTypingAndSpeechUtterance                  0x0000000000020000u
+# PDT_ProductAndServicePerformance                    0x0000000001000000u
+# PDT_ProductAndServiceUsage                          0x0000000002000000u
+# PDT_SoftwareSetupAndInventory                       0x0000000080000000u
+
+# PS C:\WINDOWS\system32> Get-DiagnosticDataCategories | fl *
+
+
+# Id          : -1
+# Name        : Incorrect Data Category
+# Description : Event is incorrectly categorized.  Microsoft is working on fixing such events
+
+# Id          : 1
+# Name        : Browsing History
+# Description : Records of the web browsing history when using the capabilities of the application or cloud service,
+#               stored in either the service or the application.
+
+# Id          : 11
+# Name        : Device Connectivity and Configuration
+# Description : Data that describes the connections and configuration of the devices connected to the service and the
+#               network, including device identifiers (e.g. IP addresses) configuration, setting and performance.
+
+# Id          : 17
+# Name        : Inking Typing and Speech Utterance
+# Description : Record of the input data provided by the end user through an interaction method or action such as
+#               inking, typing, speech utterance or gesture.
+
+# Id          : 24
+# Name        : Product and Service Performance
+# Description : Data collected about the measurement, performance and operation of the capabilities of the product or
+#               service.  This data represents information about the capability and its use, with a focus on providing
+#               the capabilities of the product or service.
+
+# Id          : 25
+# Name        : Product and Service Usage
+# Description : Data provided or captured about the end user’s interaction with the service or products by the cloud
+#               service provider.  Captured data includes the records of the end user’s preferences and settings for
+#               capabilities, the capabilities used and commands provided to the capabilities.
+
+# Id          : 31
+# Name        : Software Setup and Inventory
+# Description : Data that describes the installation, setup and update of software.
 
 $eventAppearance=@{}
 # $categoryAppearance=@{}
@@ -79,15 +131,26 @@ $details="<h1>Event-Details</h1>`n"
 
 $counter=0
 
+$startsec=(Get-date).Timeofday.Totalseconds
 
-$ddv | foreach-object {
-
-    $eventName=$_.FullName
-    $eventTime=$_.Timestamp
-    
-    Write-Progress -Activity "analyzing DDV file" -CurrentOperation "extracting event $eventtime" -Status "going back from $endtime to $starttime" -PercentComplete (100*$counter/$totalevents)
+foreach ($event in $ddv){
     
     $counter++
+    $eventName=$event.FullName
+    $eventTime=$event.Timestamp
+    
+    $completed=100*$counter/$totalevents
+    
+    if (($counter % 100) -eq 0 ){
+        $elapsedsec=(Get-date).Timeofday.Totalseconds - $startsec
+        $estimatedsec = (100 * $elapsedsec/$completed)
+        $temp=[timespan]::fromseconds($estimatedsec+$startsec)
+        $estimatedEnd="{0:hh\:mm\:ss}" -f $temp
+        
+    }
+
+    Write-Progress -Activity "analyzing $totalevents between $endtime and $starttime" -Status "estimated end time $estimatedEnd" -CurrentOperation "extracting event $counter from $eventtime" -PercentComplete $completed
+    
     # This does not show up in DDV, but DDV knows about the category. Why?
     # foreach ($temp in $_.DiagnosticDataCategories){
     #     $categoryAppearance[$temp]+="/"+$counter
@@ -95,7 +158,7 @@ $ddv | foreach-object {
     
     $eventAppearance[$eventName]+="/"+$counter
 
-    $payload=$_.json | ConvertFrom-Json
+    $payload=$event.json | ConvertFrom-Json
       
     # $details+="<tr style='background-color:#FF0000;color:#FFFFFF'><td><strong>Event {0}</strong></td><td><strong>{1}</strong></td><td colspan=2><strong>created: {2}</strong></td></tr>`n" -f $counter,$eventName,$eventTime
     $details+="<h2>Event {0}: {1} ({2})</h2>`n" -f $counter,$eventName,$eventTime
@@ -111,6 +174,9 @@ $ddv | foreach-object {
         $details+=$eventrow
     }
     $details+="</table>`n"
+    if ($counter -ge $maxevents){
+        break
+    }
 }
         
 # build EventSummaryTable
@@ -124,4 +190,4 @@ $summaryTable+="</table>"
 
 $out="$header $intro $summaryTable $details"
 
-$out | Out-File -FilePath "c:\temp\report-ddv.html"
+$out | Out-File -FilePath $outfile
